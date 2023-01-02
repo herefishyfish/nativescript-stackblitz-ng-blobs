@@ -1,11 +1,11 @@
-import { Component, OnInit } from "@angular/core";
-import { registerElement } from "@nativescript/angular";
-import { Canvas, CanvasRenderingContext2D } from "@nativescript/canvas";
-import { canvasPath } from "blobs/v2/animate";
-registerElement("Canvas", () => Canvas);
+import { Component, OnInit } from '@angular/core';
+import { registerElement } from '@nativescript/angular';
+import { Canvas, CanvasRenderingContext2D } from '@nativescript/canvas';
+import { canvasPath } from 'blobs/v2/animate';
+registerElement('Canvas', () => Canvas);
 
 @Component({
-  selector: "ns-blob",
+  selector: 'ns-blob',
   template: `
     <ActionBar title="My Profile" class="bg-fleece text-zinc-800" flat="true">
       <ActionItem ios.systemIcon="20" ios.position="right"
@@ -43,8 +43,7 @@ export class BlobComponent implements OnInit {
   x: number;
   y: number;
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   getDefaultOptions() {
     return {
@@ -57,54 +56,65 @@ export class BlobComponent implements OnInit {
       canvasOptions: {
         offsetX: this.x - this.size / 2,
         offsetY: this.y - this.size / 2,
-      }
+      },
     };
   }
 
   loopAnimation = () => {
     this.animation.transition({
-        duration: 8000,
-        timingFunction: "linear",
-        callback: this.loopAnimation,
-        ...this.getDefaultOptions(),
+      duration: 8000,
+      timingFunction: 'linear',
+      callback: this.loopAnimation,
+      ...this.getDefaultOptions(),
     });
   };
 
   onCanvasReady(args) {
     this.canvas = args?.object as Canvas;
-    this.ctx = this.canvas?.getContext("2d") as CanvasRenderingContext2D;
+    this.ctx = this.canvas?.getContext('2d') as CanvasRenderingContext2D;
 
     this.x = Number(this.canvas.width) / 2;
     this.y = Number(this.canvas.height) / 2;
-    this.size = Number(this.canvas.width) * .7;
+    this.size = Number(this.canvas.width) * 0.7;
 
     this.animation = canvasPath();
 
     this.animation.transition({
       duration: 0,
-      timingFunction: "linear",
+      timingFunction: 'linear',
       callback: this.loopAnimation,
       ...this.getDefaultOptions(),
     });
 
-    requestAnimationFrame(this.renderAnimation)
-    setInterval(() => {
-      this.renderAnimation();
-    }, 1000/60);
+    requestAnimationFrame(this.renderAnimation);
   }
 
   rotation = 0;
 
   renderAnimation = () => {
-    this.ctx.clearRect(0, 0, Number(this.canvas.width), Number(this.canvas.height));
+    this.ctx.clearRect(
+      0,
+      0,
+      Number(this.canvas.width),
+      Number(this.canvas.height)
+    );
 
-    const gradient = this.ctx.createRadialGradient(this.x, this.y, 600, Number(this.canvas.width), Number(this.canvas.height), 600);
+    const gradient = this.ctx.createRadialGradient(
+      this.x,
+      this.y,
+      600,
+      Number(this.canvas.width),
+      Number(this.canvas.height),
+      600
+    );
 
-    gradient.addColorStop(0, "#ec576b");
-    gradient.addColorStop(0.3, "#ec576b");
-    gradient.addColorStop(1, "cyan");
+    gradient.addColorStop(0, '#ec576b');
+    gradient.addColorStop(0.3, '#ec576b');
+    gradient.addColorStop(1, 'cyan');
 
     this.ctx.fillStyle = gradient;
     this.ctx.fill(this.animation.renderFrame());
+
+    requestAnimationFrame(this.renderAnimation);
   };
 }
